@@ -1,0 +1,71 @@
+DESCRIPTION:
+
+Table: Logs
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| num         | varchar |
++-------------+---------+
+In SQL, id is the primary key for this table.
+id is an autoincrement column starting from 1.
+ 
+
+Find all numbers that appear at least three times consecutively.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Logs table:
++----+-----+
+| id | num |
++----+-----+
+| 1  | 1   |
+| 2  | 1   |
+| 3  | 1   |
+| 4  | 2   |
+| 5  | 1   |
+| 6  | 2   |
+| 7  | 2   |
++----+-----+
+Output: 
++-----------------+
+| ConsecutiveNums |
++-----------------+
+| 1               |
++-----------------+
+Explanation: 1 is the only number that appears consecutively for at least three times.
+
+PostgreSQL Query Statement:
+
+SOLUTION 1:
+
+WITH t AS(
+    SELECT l1.id id_1, l2.id id_2, l3.id id_3, l1.num num_1, l2.num num_2, l3.num num_3
+    FROM Logs l1
+    JOIN logs l2
+    ON l1.id = l2.id - 1
+    JOIN logs l3
+    ON l2.id = l3.id - 1)
+SELECT DISTINCT num_1 ConsecutiveNums
+FROM t
+WHERE id_2 - id_1 = 1 AND id_3 - id_2 = 1 AND num_1 = num_2 AND num_2 = num_3
+
+
+SOLUTION 2:
+
+SELECT DISTINCT l1.num ConsecutiveNums
+FROM Logs l1
+JOIN logs l2
+ON l1.id = l2.id - 1
+JOIN logs l3
+ON l2.id = l3.id - 1
+WHERE l1.num = l2.num AND l2.num = l3.num
+
